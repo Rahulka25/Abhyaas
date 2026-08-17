@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abhyaas — Employee Portal</title>
+<style>
+:root{--primary:#1e3a8a;--primary-light:#2563eb;--bg:#f1f5f9;--surface:#ffffff;--text:#0f172a;--text-secondary:#475569;--text-muted:#94a3b8;--border:#e2e8f0;--danger:#dc2626;--success:#16a34a;--warning:#d97706;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--text);line-height:1.6;background:var(--bg);min-height:100vh}
+button,input,select,textarea{font-family:inherit}
+
+/* Login */
+.login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:16px}
+.login-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px;width:100%;max-width:420px;box-shadow:0 4px 24px rgba(0,0,0,.06)}
+.login-logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--primary-light));display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:20px;margin:0 auto 20px}
+.login-card h1{text-align:center;font-size:22px;margin-bottom:6px}
+.login-card p{text-align:center;color:var(--text-muted);font-size:14px;margin-bottom:28px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:13px;font-weight:500;color:var(--text-secondary);margin-bottom:6px}
+.form-group input,.form-group select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:15px;background:var(--surface);color:var(--text)}
+.btn{width:100%;padding:12px;border-radius:10px;font-weight:500;font-size:15px;border:none;cursor:pointer;background:var(--text);color:white;margin-top:8px}
+.btn:hover{opacity:.95}
+.btn-outline{background:none;color:var(--text);border:1px solid var(--border)}
+.btn-sm{padding:8px 14px;font-size:13px;width:auto}
+.btn-success{background:var(--success);color:white}
+.btn-danger{background:var(--danger);color:white}
+.btn-warning{background:var(--warning);color:white}
+.toggle-row{display:flex;justify-content:center;gap:8px;margin-bottom:24px}
+.toggle-row button{background:none;border:none;padding:6px 12px;font-size:13px;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent}
+.toggle-row button.active{color:var(--primary);border-bottom-color:var(--primary);font-weight:600}
+
+/* Dashboard Layout */
+.dashboard{display:none;min-height:100vh}
+.dashboard.active{display:flex}
+.sidebar{width:260px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;height:100vh;overflow-y:auto}
+.sidebar-header{padding:20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.sidebar-header .logo-mark{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,var(--primary),var(--primary-light));display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:16px}
+.sidebar-nav{flex:1;padding:12px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;font-size:14px;color:var(--text-secondary);cursor:pointer;margin-bottom:4px;border:none;background:none;width:100%;text-align:left}
+.nav-item:hover,.nav-item.active{background:var(--bg);color:var(--text)}
+.nav-item .icon{width:20px;text-align:center}
+.sidebar-footer{padding:16px;border-top:1px solid var(--border);font-size:13px;color:var(--text-muted)}
+.main{flex:1;margin-left:260px;min-height:100vh}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-title{font-size:18px;font-weight:600}
+.topbar-user{display:flex;align-items:center;gap:10px}
+.user-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-light));display:flex;align-items:center;justify-content:center;color:white;font-weight:600;font-size:14px}
+.content{padding:24px;max-width:1200px}
+
+/* Stats */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px}
+.stat-label{font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.03em;margin-bottom:6px}
+.stat-value{font-size:28px;font-weight:700;margin-bottom:4px}
+.stat-delta{font-size:13px;color:var(--text-muted)}
+
+/* Cards & Tables */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:20px}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.card-title{font-size:18px;font-weight:600}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--border)}
+th{font-weight:600;color:var(--text-muted);font-size:12px;text-transform:uppercase;letter-spacing:.03em;background:var(--bg)}
+tr:hover td{background:var(--bg)}
+.status{display:inline-block;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:500}
+.status-pending{background:#fef3c7;color:#92400e}
+.status-approved{background:#dcfce7;color:#166534}
+.status-rejected{background:#fee2e2;color:#991b1b}
+.badge-inline{display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:500;background:var(--bg);color:var(--text-secondary)}
+
+/* Leave balance circles */
+.balance-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px;margin-bottom:24px}
+.balance-item{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center}
+.balance-circle{width:72px;height:72px;border-radius:50%;border:4px solid var(--border);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:18px;font-weight:700;position:relative}
+.balance-circle.cl{border-color:#2563eb;color:#2563eb}
+.balance-circle.sl{border-color:#16a34a;color:#16a34a}
+.balance-circle.el{border-color:#9333ea;color:#9333ea}
+.balance-label{font-size:13px;color:var(--text-muted)}
+
+/* Calendar */
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-header{text-align:center;font-size:12px;color:var(--text-muted);padding:8px;font-weight:600}
+.cal-day{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:8px;min-height:80px;font-size:13px}
+.cal-day.other{color:var(--text-muted);background:var(--bg)}
+.cal-event{font-size:11px;padding:2px 6px;border-radius:4px;margin-top:4px;background:#eff6ff;color:#1e40af}
+
+/* Responsive */
+@media(max-width:768px){
+.sidebar{display:none}
+.main{margin-left:0}
+.stats-grid{grid-template-columns:repeat(2,1fr)}
+.balance-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-view" class="login-wrap">
+<div class="login-card">
+<div class="login-logo">A</div>
+<h1>Abhyaas Portal</h1>
+<p>Employee & Admin Login</p>
+<div class="toggle-row">
+<button class="active" onclick="switchLogin('employee',this)">Employee</button>
+<button onclick="switchLogin('admin',this)">Admin</button>
+</div>
+<form onsubmit="handleLogin(event)">
+<div class="form-group"><label>Email</label><input type="email" id="login-email" placeholder="you@abhyaas.edu" required></div>
+<div class="form-group"><label>Password</label><input type="password" placeholder="••••••••" required></div>
+<button type="submit" class="btn">Sign in</button>
+</form>
+</div>
+</div>
+
+<!-- EMPLOYEE DASHBOARD -->
+<div id="employee-dashboard" class="dashboard">
+<div class="sidebar">
+<div class="sidebar-header">
+<div class="logo-mark">A</div>
+<div><div style="font-weight:600;font-size:14px">Abhyaas Portal</div><div style="font-size:12px;color:var(--text-muted)">Employee</div></div>
+</div>
+<div class="sidebar-nav">
+<button class="nav-item active" onclick="showEmpPanel('emp-overview',this)"><span class="icon">📊</span> Overview</button>
+<button class="nav-item" onclick="showEmpPanel('emp-apply',this)"><span class="icon">📝</span> Apply Leave</button>
+<button class="nav-item" onclick="showEmpPanel('emp-history',this)"><span class="icon">📋</span> Leave History</button>
+<button class="nav-item" onclick="showEmpPanel('emp-profile',this)"><span class="icon">👤</span> Profile</button>
+</div>
+<div class="sidebar-footer">
+<button class="nav-item" onclick="logout()" style="color:var(--danger)"><span class="icon">🚪</span> Logout</button>
+</div>
+</div>
+<div class="main">
+<div class="topbar">
+<div class="topbar-title" id="emp-page-title">Dashboard</div>
+<div class="topbar-user">
+<div style="text-align:right"><div style="font-weight:600;font-size:14px">Dr. Deepak K S</div><div style="font-size:12px;color:var(--text-muted)">Principal · Maths</div></div>
+<div class="user-avatar">D</div>
+</div>
+</div>
+<div class="content">
+
+<!-- Overview -->
+<div id="emp-overview" class="emp-panel active">
+<div class="balance-grid">
+<div class="balance-item"><div class="balance-circle cl">12</div><div class="balance-label">Casual Leave</div></div>
+<div class="balance-item"><div class="balance-circle sl">8</div><div class="balance-label">Sick Leave</div></div>
+<div class="balance-item"><div class="balance-circle el">15</div><div class="balance-label">Earned Leave</div></div>
+<div class="balance-item"><div class="balance-circle" style="border-color:var(--warning);color:var(--warning)">0</div><div class="balance-label">Used this month</div></div>
+</div>
+<div class="card">
+<div class="card-header"><div class="card-title">Recent leave applications</div></div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>Casual Leave</td><td>Aug 15, 2026</td><td>Aug 16, 2026</td><td>2</td><td><span class="status status-approved">Approved</span></td></tr>
+<tr><td>Sick Leave</td><td>Jul 22, 2026</td><td>Jul 23, 2026</td><td>2</td><td><span class="status status-approved">Approved</span></td></tr>
+<tr><td>Casual Leave</td><td>Jun 10, 2026</td><td>Jun 10, 2026</td><td>1</td><td><span class="status status-rejected">Rejected</span></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<!-- Apply Leave -->
+<div id="emp-apply" class="emp-panel" style="display:none">
+<div class="card" style="max-width:600px">
+<div class="card-header"><div class="card-title">Apply for leave</div></div>
+<form onsubmit="handleLeaveApply(event)">
+<div class="form-group"><label>Leave type *</label><select required><option value="">Select type</option><option>Casual Leave</option><option>Sick Leave</option><option>Earned Leave</option><option>Maternity / Paternity Leave</option></select></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+<div class="form-group"><label>From date *</label><input type="date" required></div>
+<div class="form-group"><label>To date *</label><input type="date" required></div>
+</div>
+<div class="form-group"><label>Reason *</label><textarea rows="3" placeholder="Brief reason for leave" required></textarea></div>
+<div class="form-group"><label>Attachment (optional)</label><input type="file"></div>
+<button type="submit" class="btn">Submit application</button>
+</form>
+</div>
+</div>
+
+<!-- History -->
+<div id="emp-history" class="emp-panel" style="display:none">
+<div class="card">
+<div class="card-header"><div class="card-title">Leave history</div><div style="display:flex;gap:8px"><select style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px"><option>All types</option><option>Casual</option><option>Sick</option><option>Earned</option></select><select style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px"><option>2026</option><option>2025</option></select></div></div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Applied</th><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Status</th><th>Remarks</th></tr></thead>
+<tbody>
+<tr><td>Aug 10, 2026</td><td>Casual Leave</td><td>Aug 15, 2026</td><td>Aug 16, 2026</td><td>2</td><td><span class="status status-approved">Approved</span></td><td>—</td></tr>
+<tr><td>Jul 20, 2026</td><td>Sick Leave</td><td>Jul 22, 2026</td><td>Jul 23, 2026</td><td>2</td><td><span class="status status-approved">Approved</span></td><td>Get well soon</td></tr>
+<tr><td>Jun 08, 2026</td><td>Casual Leave</td><td>Jun 10, 2026</td><td>Jun 10, 2026</td><td>1</td><td><span class="status status-rejected">Rejected</span></td><td>Exam duty conflict</td></tr>
+<tr><td>May 02, 2026</td><td>Earned Leave</td><td>May 05, 2026</td><td>May 09, 2026</td><td>5</td><td><span class="status status-approved">Approved</span></td><td>—</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<!-- Profile -->
+<div id="emp-profile" class="emp-panel" style="display:none">
+<div class="card" style="max-width:600px">
+<div class="card-header"><div class="card-title">My profile</div></div>
+<div style="display:flex;align-items:center;gap:16px;margin-bottom:24px">
+<div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;color:white;font-size:24px;font-weight:600">D</div>
+<div><div style="font-weight:600;font-size:16px">Dr. Deepak K S</div><div style="font-size:13px;color:var(--text-muted)">Principal · Mathematics Department</div></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label>Full name</label><input type="text" value="Dr. Deepak K S"></div>
+<div class="form-group"><label>Email</label><input type="email" value="deepak@abhyaas.edu"></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label>Phone</label><input type="tel" value="+91 98765 43210"></div>
+<div class="form-group"><label>Department</label><input type="text" value="Mathematics" disabled style="background:var(--bg)"></div>
+</div>
+<div class="form-group"><label>Designation</label><input type="text" value="Principal" disabled style="background:var(--bg)"></div>
+<div style="display:flex;gap:12px;margin-top:8px">
+<button class="btn btn-sm">Save changes</button>
+<button class="btn btn-sm btn-outline">Change password</button>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+
+<!-- ADMIN DASHBOARD -->
+<div id="admin-dashboard" class="dashboard">
+<div class="sidebar">
+<div class="sidebar-header">
+<div class="logo-mark">A</div>
+<div><div style="font-weight:600;font-size:14px">Abhyaas Portal</div><div style="font-size:12px;color:var(--text-muted)">Admin</div></div>
+</div>
+<div class="sidebar-nav">
+<button class="nav-item active" onclick="showAdminPanel('adm-overview',this)"><span class="icon">📊</span> Dashboard</button>
+<button class="nav-item" onclick="showAdminPanel('adm-employees',this)"><span class="icon">👥</span> Employees</button>
+<button class="nav-item" onclick="showAdminPanel('adm-leaves',this)"><span class="icon">📋</span> Leave Requests</button>
+<button class="nav-item" onclick="showAdminPanel('adm-calendar',this)"><span class="icon">📅</span> Leave Calendar</button>
+<button class="nav-item" onclick="showAdminPanel('adm-enquiries',this)"><span class="icon">💬</span> Enquiries</button>
+<button class="nav-item" onclick="showAdminPanel('adm-reports',this)"><span class="icon">📈</span> Reports</button>
+</div>
+<div class="sidebar-footer">
+<button class="nav-item" onclick="logout()" style="color:var(--danger)"><span class="icon">🚪</span> Logout</button>
+</div>
+</div>
+<div class="main">
+<div class="topbar">
+<div class="topbar-title" id="admin-page-title">Admin Dashboard</div>
+<div class="topbar-user">
+<div style="text-align:right"><div style="font-weight:600;font-size:14px">Admin</div><div style="font-size:12px;color:var(--text-muted)">Superuser</div></div>
+<div class="user-avatar" style="background:var(--text)">A</div>
+</div>
+</div>
+<div class="content">
+
+<!-- Overview -->
+<div id="adm-overview" class="adm-panel active">
+<div class="stats-grid">
+<div class="stat-card"><div class="stat-label">Total employees</div><div class="stat-value">20</div><div class="stat-delta">Teaching + Non-teaching</div></div>
+<div class="stat-card"><div class="stat-label">Pending leaves</div><div class="stat-value" style="color:var(--warning)">4</div><div class="stat-delta">Awaiting approval</div></div>
+<div class="stat-card"><div class="stat-label">Approved this month</div><div class="stat-value" style="color:var(--success)">12</div><div class="stat-delta">+3 from last month</div></div>
+<div class="stat-card"><div class="stat-label">New enquiries</div><div class="stat-value" style="color:var(--primary-light)">8</div><div class="stat-delta">This week</div></div>
+</div>
+<div class="grid-2">
+<div class="card">
+<div class="card-header"><div class="card-title">Recent leave requests</div><button class="btn btn-sm btn-outline" onclick="showAdminPanel('adm-leaves',document.querySelectorAll('.sidebar-nav .nav-item')[2])">View all</button></div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Employee</th><th>Type</th><th>From</th><th>To</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td>Mrs. Prathima P K</td><td>Casual</td><td>Aug 18</td><td>Aug 19</td><td><button class="btn btn-sm btn-success" style="padding:4px 10px;font-size:12px">Approve</button> <button class="btn btn-sm btn-danger" style="padding:4px 10px;font-size:12px">Reject</button></td></tr>
+<tr><td>Mr. Abhilash K</td><td>Sick</td><td>Aug 20</td><td>Aug 21</td><td><button class="btn btn-sm btn-success" style="padding:4px 10px;font-size:12px">Approve</button> <button class="btn btn-sm btn-danger" style="padding:4px 10px;font-size:12px">Reject</button></td></tr>
+<tr><td>Dr. Darshan Raj</td><td>Earned</td><td>Aug 25</td><td>Aug 30</td><td><button class="btn btn-sm btn-success" style="padding:4px 10px;font-size:12px">Approve</button> <button class="btn btn-sm btn-danger" style="padding:4px 10px;font-size:12px">Reject</button></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="card">
+<div class="card-header"><div class="card-title">Recent enquiries</div><button class="btn btn-sm btn-outline" onclick="showAdminPanel('adm-enquiries',document.querySelectorAll('.sidebar-nav .nav-item')[4])">View all</button></div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Name</th><th>Course</th><th>Date</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>Rahul Sharma</td><td>PUC PCMB</td><td>Aug 08</td><td><span class="status status-pending">New</span></td></tr>
+<tr><td>Priya Patel</td><td>NEET Coaching</td><td>Aug 07</td><td><span class="status status-pending">New</span></td></tr>
+<tr><td>Amit Kumar</td><td>PUC PCMC</td><td>Aug 06</td><td><span class="status status-approved">Contacted</span></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Employees -->
+<div id="adm-employees" class="adm-panel" style="display:none">
+<div class="card">
+<div class="card-header">
+<div class="card-title">All employees</div>
+<div style="display:flex;gap:8px"><input type="text" placeholder="Search..." style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px"><button class="btn btn-sm btn-primary">+ Add employee</button></div>
+</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Name</th><th>Department</th><th>Designation</th><th>Phone</th><th>Joining</th><th>Status</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td>Mr. Karthikeya M S</td><td>Physics</td><td>Chairman</td><td>8296003705</td><td>2010</td><td><span class="status status-approved">Active</span></td><td><button class="btn btn-sm btn-outline">Edit</button></td></tr>
+<tr><td>Dr. Deepak K S</td><td>Mathematics</td><td>Principal</td><td>9353003705</td><td>2012</td><td><span class="status status-approved">Active</span></td><td><button class="btn btn-sm btn-outline">Edit</button></td></tr>
+<tr><td>Dr. Darshan Raj C G</td><td>Chemistry</td><td>HOD</td><td>9876543210</td><td>2015</td><td><span class="status status-approved">Active</span></td><td><button class="btn btn-sm btn-outline">Edit</button></td></tr>
+<tr><td>Mrs. Prathima P K</td><td>Physics</td><td>Faculty</td><td>9876543211</td><td>2016</td><td><span class="status status-approved">Active</span></td><td><button class="btn btn-sm btn-outline">Edit</button></td></tr>
+<tr><td>Mr. Khaleel Sab</td><td>Mathematics</td><td>Faculty</td><td>9876543212</td><td>2014</td><td><span class="status status-approved">Active</span></td><td><button class="btn btn-sm btn-outline">Edit</button></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<!-- Leave Requests -->
+<div id="adm-leaves" class="adm-panel" style="display:none">
+<div class="card">
+<div class="card-header">
+<div class="card-title">Leave requests</div>
+<div style="display:flex;gap:8px">
+<select style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px"><option>All departments</option><option>Physics</option><option>Chemistry</option><option>Maths</option><option>Biology</option></select>
+<select style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px"><option>All types</option><option>Casual</option><option>Sick</option><option>Earned</option></select>
+</div>
+</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th><input type="checkbox"></th><th>Employee</th><th>Department</th><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Reason</th><th>Status</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td><input type="checkbox"></td><td>Mrs. Prathima P K</td><td>Physics</td><td>Casual</td><td>Aug 18</td><td>Aug 19</td><td>2</td><td>Personal work</td><td><span class="status status-pending">Pending</span></td><td><button class="btn btn-sm btn-success" style="padding:4px 10px;font-size:12px">✓</button> <button class="btn btn-sm btn-danger" style="padding:4px 10px;font-size:12px">✕</button></td></tr>
+<tr><td><input type="checkbox"></td><td>Mr. Abhilash K</td><td>Physics</td><td>Sick</td><td>Aug 20</td><td>Aug 21</td><td>2</td><td>Fever</td><td><span class="status status-pending">Pending</span></td><td><button class="btn btn-sm btn-success" style="padding:4px 10px;font-size:12px">✓</button> <button class="btn btn-sm btn-danger" style="padding:4px 10px;font-size:12px">✕</button></td></tr>
+<tr><td><input type="checkbox"></td><td>Dr. Darshan Raj</td><td>Chemistry</td><td>Earned</td><td>Aug 25</td><td>Aug 30</td><td>5</td><td>Family function</td><td><span class="status status-pending">Pending</span></td><td><button class="btn btn-sm btn-success" style="padding:4px 10px;font-size:12px">✓</button> <button class="btn btn-sm btn-danger" style="padding:4px 10px;font-size:12px">✕</button></td></tr>
+<tr><td><input type="checkbox"></td><td>Mrs. Vidyashree</td><td>Chemistry</td><td>Casual</td><td>Aug 22</td><td>Aug 22</td><td>1</td><td>Bank work</td><td><span class="status status-pending">Pending</span></td><td><button class="btn btn-sm btn-success" style="padding:4px 10px;font-size:12px">✓</button> <button class="btn btn-sm btn-danger" style="padding:4px 10px;font-size:12px">✕</button></td></tr>
+<tr><td><input type="checkbox"></td><td>Mr. Karthikeya M S</td><td>Physics</td><td>Casual</td><td>Aug 12</td><td>Aug 13</td><td>2</td><td>Meeting</td><td><span class="status status-approved">Approved</span></td><td>—</td></tr>
+</tbody>
+</table>
+</div>
+<div style="margin-top:12px;display:flex;gap:8px">
+<button class="btn btn-sm btn-success">Bulk approve</button>
+<button class="btn btn-sm btn-danger">Bulk reject</button>
+</div>
+</div>
+</div>
+
+<!-- Calendar -->
+<div id="adm-calendar" class="adm-panel" style="display:none">
+<div class="card">
+<div class="card-header"><div class="card-title">Leave calendar — August 2026</div><div style="display:flex;gap:8px;align-items:center"><span style="font-size:13px;color:var(--text-muted)">Department:</span><select style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px"><option>All</option><option>Physics</option><option>Chemistry</option><option>Maths</option></select></div></div>
+<div class="calendar-grid">
+<div class="cal-header">Sun</div><div class="cal-header">Mon</div><div class="cal-header">Tue</div><div class="cal-header">Wed</div><div class="cal-header">Thu</div><div class="cal-header">Fri</div><div class="cal-header">Sat</div>
+<div class="cal-day other">26</div><div class="cal-day other">27</div><div class="cal-day other">28</div><div class="cal-day other">29</div><div class="cal-day other">30</div><div class="cal-day other">31</div><div class="cal-day">1</div>
+<div class="cal-day">2</div><div class="cal-day">3</div><div class="cal-day">4</div><div class="cal-day">5</div><div class="cal-day">6</div><div class="cal-day">7</div><div class="cal-day">8</div>
+<div class="cal-day">9</div><div class="cal-day">10</div><div class="cal-day">11</div><div class="cal-day">12<div class="cal-event" style="background:#fee2e2;color:#991b1b">Karthikeya</div></div><div class="cal-day">13<div class="cal-event" style="background:#fee2e2;color:#991b1b">Karthikeya</div></div><div class="cal-day">14</div><div class="cal-day">15</div>
+<div class="cal-day">16</div><div class="cal-day">17</div><div class="cal-day">18<div class="cal-event">Prathima</div></div><div class="cal-day">19<div class="cal-event">Prathima</div></div><div class="cal-day">20<div class="cal-event" style="background:#dcfce7;color:#166534">Abhilash</div></div><div class="cal-day">21<div class="cal-event" style="background:#dcfce7;color:#166534">Abhilash</div></div><div class="cal-day">22<div class="cal-event">Vidyashree</div></div>
+<div class="cal-day">23</div><div class="cal-day">24</div><div class="cal-day">25<div class="cal-event" style="background:#fef3c7;color:#92400e">Darshan</div></div><div class="cal-day">26<div class="cal-event" style="background:#fef3c7;color:#92400e">Darshan</div></div><div class="cal-day">27<div class="cal-event" style="background:#fef3c7;color:#92400e">Darshan</div></div><div class="cal-day">28<div class="cal-event" style="background:#fef3c7;color:#92400e">Darshan</div></div><div class="cal-day">29<div class="cal-event" style="background:#fef3c7;color:#92400e">Darshan</div></div>
+<div class="cal-day">30</div><div class="cal-day">31</div><div class="cal-day other">1</div><div class="cal-day other">2</div><div class="cal-day other">3</div><div class="cal-day other">4</div><div class="cal-day other">5</div>
+</div>
+<div style="margin-top:16px;display:flex;gap:16px;font-size:13px">
+<div style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:#eff6ff;display:inline-block"></span> Casual</div>
+<div style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:#dcfce7;display:inline-block"></span> Sick</div>
+<div style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:#fef3c7;display:inline-block"></span> Earned</div>
+</div>
+</div>
+</div>
+
+<!-- Enquiries -->
+<div id="adm-enquiries" class="adm-panel" style="display:none">
+<div class="card">
+<div class="card-header">
+<div class="card-title">Admission enquiries</div>
+<div style="display:flex;gap:8px">
+<select style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px"><option>All status</option><option>New</option><option>Contacted</option><option>Converted</option></select>
+<button class="btn btn-sm btn-outline">Export CSV</button>
+</div>
+</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Date</th><th>Student</th><th>Parent</th><th>Phone</th><th>Course</th><th>Status</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td>Aug 08, 2026</td><td>Rahul Sharma</td><td>Mr. Sharma</td><td>9876543210</td><td>PUC PCMB</td><td><span class="status status-pending">New</span></td><td><button class="btn btn-sm btn-outline">Mark contacted</button></td></tr>
+<tr><td>Aug 07, 2026</td><td>Priya Patel</td><td>Mrs. Patel</td><td>9876543211</td><td>NEET Coaching</td><td><span class="status status-pending">New</span></td><td><button class="btn btn-sm btn-outline">Mark contacted</button></td></tr>
+<tr><td>Aug 06, 2026</td><td>Amit Kumar</td><td>Mr. Kumar</td><td>9876543212</td><td>PUC PCMC</td><td><span class="status status-approved">Contacted</span></td><td><button class="btn btn-sm btn-outline">Mark converted</button></td></tr>
+<tr><td>Aug 05, 2026</td><td>Sneha Rao</td><td>Mr. Rao</td><td>9876543213</td><td>JEE Coaching</td><td><span class="status status-approved">Converted</span></td><td>—</td></tr>
+<tr><td>Aug 04, 2026</td><td>Vikram Naik</td><td>Mrs. Naik</td><td>9876543214</td><td>PUC PCMB</td><td><span class="status status-pending">New</span></td><td><button class="btn btn-sm btn-outline">Mark contacted</button></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<!-- Reports -->
+<div id="adm-reports" class="adm-panel" style="display:none">
+<div class="card">
+<div class="card-header"><div class="card-title">Leave reports</div><div style="display:flex;gap:8px"><select style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px"><option>August 2026</option><option>July 2026</option><option>June 2026</option></select><button class="btn btn-sm btn-outline">Export Excel</button></div></div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Employee</th><th>Department</th><th>Casual</th><th>Sick</th><th>Earned</th><th>Total</th></tr></thead>
+<tbody>
+<tr><td>Mr. Karthikeya M S</td><td>Physics</td><td>2</td><td>0</td><td>0</td><td>2</td></tr>
+<tr><td>Mrs. Prathima P K</td><td>Physics</td><td>2</td><td>1</td><td>0</td><td>3</td></tr>
+<tr><td>Dr. Darshan Raj C G</td><td>Chemistry</td><td>0</td><td>0</td><td>5</td><td>5</td></tr>
+<tr><td>Dr. Deepak K S</td><td>Maths</td><td>2</td><td>2</td><td>5</td><td>9</td></tr>
+<tr><td>Mrs. Sumalatha</td><td>Biology</td><td>1</td><td>0</td><td>0</td><td>1</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+
+<script>
+let loginType='employee';
+function switchLogin(type,btn){
+loginType=type;
+document.querySelectorAll('.toggle-row button').forEach(b=>b.classList.remove('active'));
+btn.classList.add('active');
+document.getElementById('login-email').placeholder=type==='admin'?'admin@abhyaas.edu':'you@abhyaas.edu';
+}
+function handleLogin(e){
+e.preventDefault();
+document.getElementById('login-view').style.display='none';
+if(loginType==='admin'){
+document.getElementById('admin-dashboard').classList.add('active');
+}else{
+document.getElementById('employee-dashboard').classList.add('active');
+}
+}
+function logout(){
+document.getElementById('login-view').style.display='flex';
+document.getElementById('employee-dashboard').classList.remove('active');
+document.getElementById('admin-dashboard').classList.remove('active');
+}
+function showEmpPanel(id,btn){
+document.querySelectorAll('.emp-panel').forEach(p=>p.style.display='none');
+document.getElementById(id).style.display='block';
+document.querySelectorAll('#employee-dashboard .nav-item').forEach(b=>b.classList.remove('active'));
+if(btn)btn.classList.add('active');
+const titles={'emp-overview':'Dashboard','emp-apply':'Apply Leave','emp-history':'Leave History','emp-profile':'Profile'};
+document.getElementById('emp-page-title').textContent=titles[id]||'Dashboard';
+}
+function showAdminPanel(id,btn){
+document.querySelectorAll('.adm-panel').forEach(p=>p.style.display='none');
+document.getElementById(id).style.display='block';
+document.querySelectorAll('#admin-dashboard .nav-item').forEach(b=>b.classList.remove('active'));
+if(btn)btn.classList.add('active');
+const titles={'adm-overview':'Admin Dashboard','adm-employees':'Employees','adm-leaves':'Leave Requests','adm-calendar':'Leave Calendar','adm-enquiries':'Enquiries','adm-reports':'Reports'};
+document.getElementById('admin-page-title').textContent=titles[id]||'Admin Dashboard';
+}
+function handleLeaveApply(e){
+e.preventDefault();
+alert('Leave application submitted successfully!');
+showEmpPanel('emp-history',document.querySelectorAll('#employee-dashboard .nav-item')[2]);
+}
+</script>
+</body>
+</html>
