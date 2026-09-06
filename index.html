@@ -136,7 +136,9 @@ nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.95);backdrop
 
 .form-group{margin-bottom:16px}
 .form-group label{display:block;font-size:13px;font-weight:500;color:var(--text-secondary);margin-bottom:6px}
-.form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:15px;background:var(--bg);color:var(--text);font-family:inherit}
+.form-group label .optional-tag{color:var(--text-muted);font-weight:400;font-style:italic}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:10px;font-size:15px;background:var(--bg);color:var(--text);font-family:inherit;transition:border-color .15s,box-shadow .15s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 4px rgba(13,148,136,.14)}
 .form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
 
 .faculty-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
@@ -170,22 +172,30 @@ footer{border-top:1px solid var(--border);padding:48px 16px 24px;background:var(
 .whatsapp-float{position:fixed;bottom:24px;left:24px;z-index:90;width:58px;height:58px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(0,0,0,.2);cursor:pointer;text-decoration:none;transition:transform .15s}
 .whatsapp-float:hover{transform:scale(1.08)}
 
-.modal-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.5);align-items:center;justify-content:center;padding:16px}
+.modal-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(15,23,42,.6);align-items:center;justify-content:center;padding:16px}
 .modal-overlay.active{display:flex}
-.modal{background:var(--bg);border-radius:16px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto}
-.modal-header{padding:24px 28px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.modal-header h2{font-size:20px;font-weight:600}
-.modal-header p{font-size:13px;color:var(--text-muted);margin:4px 0 0}
-.modal-close{background:none;border:none;padding:6px;cursor:pointer;color:var(--text-secondary);border-radius:8px;font-size:18px}
+.modal{background:var(--bg);border-radius:20px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 25px 60px rgba(0,0,0,.3)}
+.modal-header{padding:28px 52px 24px 28px;background:linear-gradient(135deg,var(--teal) 0%,var(--primary) 100%);border-radius:20px 20px 0 0;position:sticky;top:0;z-index:10;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+.modal-header .modal-icon{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:12px}
+.modal-header h2{color:white;font-size:22px;font-weight:700}
+.modal-header p{color:rgba(255,255,255,.9);font-size:13px;margin:4px 0 0}
+.modal-close{background:rgba(255,255,255,.15);border:none;padding:6px 9px;cursor:pointer;color:white;border-radius:8px;font-size:16px;position:absolute;top:20px;right:20px;z-index:2;transition:background .15s}
+.modal-close:hover{background:rgba(255,255,255,.28)}
 .modal-close:hover{background:var(--bg-muted)}
-.modal-body{padding:24px 28px}
+.modal-body{padding:26px 28px 28px}
 .checkbox-row{display:flex;align-items:center;gap:8px;margin-bottom:20px}
+.checkbox-row input{width:16px;height:16px;accent-color:var(--teal)}
+.trust-row{display:flex;align-items:center;gap:16px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border);font-size:12px;color:var(--text-muted)}
+.trust-row span{display:flex;align-items:center;gap:5px}
+.btn-block{width:100%;padding:14px;background:linear-gradient(135deg,var(--teal),#0f766e);color:white;border:none;border-radius:10px;font-weight:600;font-size:16px;cursor:pointer;box-shadow:0 6px 16px rgba(13,148,136,.3);transition:transform .12s,box-shadow .12s}
+.btn-block:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(13,148,136,.4)}
+.btn-block:disabled{opacity:.7;cursor:not-allowed;transform:none}
 .checkbox-row input{width:16px;height:16px}
 .checkbox-row label{font-size:13px;color:var(--text-secondary);cursor:pointer}
-.btn-block{width:100%;padding:12px;background:var(--teal);color:white;border:none;border-radius:10px;font-weight:500;font-size:15px;cursor:pointer}
 .success-msg{display:none;text-align:center;padding:40px 28px}
 .success-msg.active{display:block}
-.success-icon{width:56px;height:56px;border-radius:50%;background:#dcfce7;color:#16a34a;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px}
+.success-icon{width:64px;height:64px;border-radius:50%;background:#f0fdfa;color:var(--teal);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;animation:popIn .4s ease}
+@keyframes popIn{0%{transform:scale(0);opacity:0}70%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
 
 .page{display:none}
 .page.active{display:block}
@@ -1173,22 +1183,33 @@ footer{border-top:1px solid var(--border);padding:48px 16px 24px;background:var(
 </a>
 <button class="float-btn" onclick="openEnquiry()">💬 Enquire Now</button>
 
+<iframe name="enquiry-hidden-frame" style="display:none" title="submission target"></iframe>
 <div class="modal-overlay" id="enquiry-modal" onclick="if(event.target===this)closeEnquiry()">
 <div class="modal">
 <div class="modal-header">
-<div><h2>Enquiry form</h2><p>We'll get back to you within 24 hours</p></div>
+<div class="modal-icon">🎓</div>
+<h2>Let's get started!</h2>
+<p>Tell us a bit about the student — we'll get back to you within 24 hours.</p>
 <button class="modal-close" onclick="closeEnquiry()">✕</button>
 </div>
 <div class="modal-body" id="modal-form-body">
-<form id="enquiry-form" onsubmit="handleEnquirySubmit(event)">
-<div class="form-group"><label>Student name *</label><input type="text" required placeholder="Enter student name"></div>
-<div class="form-group"><label>Parent / guardian name *</label><input type="text" required placeholder="Enter parent name"></div>
-<div class="form-group"><label>Phone number *</label><input type="tel" required placeholder="Enter phone number"></div>
-<div class="form-group"><label>Email *</label><input type="email" required placeholder="Enter email address"></div>
-<div class="form-group"><label>Course interested in *</label><select required><option value="">Select a course</option><option>PUC PCMB</option><option>PUC PCMC</option><option>NEET Coaching</option><option>JEE Coaching</option><option>KCET Coaching</option><option>NDA Coaching</option><option>CLAT Coaching</option><option>NAT Coaching</option><option>Banking Coaching</option><option>Other</option></select></div>
-<div class="form-group"><label>Current class / institution</label><input type="text" placeholder="e.g. 10th Std, XYZ School"></div>
+<form id="enquiry-form" action="https://formsubmit.co/rahulka25@gmail.com" method="POST" target="enquiry-hidden-frame" onsubmit="handleEnquirySubmit(event)">
+<input type="hidden" name="_subject" value="New enquiry — Abhyaas PU College website">
+<input type="hidden" name="_captcha" value="false">
+<input type="hidden" name="_template" value="table">
+<div class="form-group"><label>Student name *</label><input type="text" name="Student name" required placeholder="Enter student name"></div>
+<div class="form-group"><label>Place <span class="optional-tag">(optional)</span></label><input type="text" name="Place" placeholder="Enter city / town"></div>
+<div class="form-group"><label>Phone number *</label><input type="tel" name="Phone number" required placeholder="Enter phone number"></div>
+<div class="form-group"><label>Email <span class="optional-tag">(optional)</span></label><input type="email" name="Email" placeholder="Enter email address"></div>
+<div class="form-group"><label>Course interested in *</label><select name="Course interested in" required><option value="">Select a course</option><option>PUC PCMB</option><option>PUC PCMC</option><option>NEET Coaching</option><option>JEE Coaching</option><option>KCET Coaching</option><option>NDA Coaching</option><option>CLAT Coaching</option><option>NAT Coaching</option><option>Banking Coaching</option><option>Other</option></select></div>
+<div class="form-group"><label>Current class / institution</label><input type="text" name="Current class / institution" placeholder="e.g. 10th Std, XYZ School"></div>
 <div class="checkbox-row"><input type="checkbox" id="no-show"><label for="no-show">Don't show this again</label></div>
-<button type="submit" class="btn-block">Submit enquiry</button>
+<div id="enquiry-error" style="display:none;background:#fef2f2;color:#dc2626;font-size:13px;padding:10px 12px;border-radius:8px;margin-bottom:14px">Something went wrong sending your enquiry. Please try again, or call us directly at <strong>+91 82960 03705</strong>.</div>
+<button type="submit" class="btn-block" id="enquiry-submit-btn">Submit enquiry →</button>
+<div class="trust-row">
+<span>🔒 Your info stays private</span>
+<span>⚡ Quick 24-hr response</span>
+</div>
 </form>
 </div>
 <div class="success-msg" id="success-msg">
@@ -1233,7 +1254,25 @@ h2Timer=setInterval(h2Next,4500);
 h2StartSlider();
 function openEnquiry(){document.getElementById('enquiry-modal').classList.add('active');document.body.style.overflow='hidden';}
 function closeEnquiry(){document.getElementById('enquiry-modal').classList.remove('active');document.body.style.overflow='';document.getElementById('modal-form-body').style.display='block';document.getElementById('success-msg').classList.remove('active');document.getElementById('enquiry-form').reset();}
-function handleEnquirySubmit(e){e.preventDefault();document.getElementById('modal-form-body').style.display='none';document.getElementById('success-msg').classList.add('active');}
+function handleEnquirySubmit(e){
+const btn=document.getElementById('enquiry-submit-btn');
+const errorBox=document.getElementById('enquiry-error');
+btn.disabled=true;
+btn.textContent='Sending...';
+errorBox.style.display='none';
+const frame=document.querySelector('iframe[name="enquiry-hidden-frame"]');
+let done=false;
+const finish=function(){
+if(done)return;
+done=true;
+btn.disabled=false;
+btn.textContent='Submit enquiry \u2192';
+document.getElementById('modal-form-body').style.display='none';
+document.getElementById('success-msg').classList.add('active');
+};
+frame.addEventListener('load',finish,{once:true});
+setTimeout(finish,4000);
+}
 function handleContactSubmit(e){e.preventDefault();alert('Thank you! Your message has been sent. We will contact you shortly.');e.target.reset();}
 function switchTab(e,panelId){e.target.parentElement.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));e.target.classList.add('active');document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));document.getElementById(panelId).classList.add('active');}
 if(!sessionStorage.getItem('enquiryShown')){setTimeout(()=>{openEnquiry();sessionStorage.setItem('enquiryShown','1');},2000);}
